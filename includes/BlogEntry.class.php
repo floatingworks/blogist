@@ -5,10 +5,10 @@
 *	@params String title, String blogContent
 *	@return Boolean 
 */
-class Blogentry ($title, $blogContent)
+class Blogentry 
 {
-	$this->title = $title;
-	$this->blogContent = $blogContent;
+	public $title;
+	public $blogContent;
 
 	/**
 	* Blogentry constructor

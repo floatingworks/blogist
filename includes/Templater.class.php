@@ -41,7 +41,7 @@ class Templater
 		require $this->template;
 	}
 
-	public function set($key, $value)
+	public function set($key = '', $value = '')
 	{
 		$this->var[$key] = $value;
 	}
