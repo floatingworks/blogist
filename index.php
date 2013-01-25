@@ -1,6 +1,6 @@
 <?php
 
-// we need to create an autoloader for these
+// bootstrapping ho
 require_once('bootstrap.php');
 
 $mode =  'form';
