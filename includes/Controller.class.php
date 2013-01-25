@@ -1,6 +1,7 @@
 <?php
 
-class Controller {
+class Controller 
+{
 
 	public $view;
 
@@ -19,8 +20,12 @@ class Controller {
 				//iterate through post variables and set them as template variables
 				foreach ($_POST as $index => $value){
 					$this->view->set($index, $value);
+
 				}
 				break;
+				case 'list':
+				// show the list of blogs
+				
 			}
 			$this->view->render();
 
@@ -29,3 +34,5 @@ class Controller {
 		}
 	}
 }
+
+?>

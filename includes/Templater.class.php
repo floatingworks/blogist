@@ -4,7 +4,7 @@ class Templater
 {
 	private $template;
 	// template directory absolute path.  This may need to be moved to a config file
-	private $templateRoot = '/home/chris/workspace/blogist/templates/';
+	private $templateRoot = TEMPLATE_ROOT;
 	public $var = Array();
 
 	/**

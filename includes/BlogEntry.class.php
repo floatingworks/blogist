@@ -18,6 +18,11 @@ class Blogentry ($title, $blogContent)
 		return true;
 	}
 
+	function getBlogs ()
+	{
+		return true;
+	}
+
 	function save ()
 	{
 		// save the object to db

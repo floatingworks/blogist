@@ -1,7 +1,7 @@
 <VirtualHost *>
-  ServerAlias blogist.local
-  DocumentRoot /home/chris/workspace/blogist
-  <Directory "/home/chris/workspace/blogist">
+  ServerAlias someurl.here
+  DocumentRoot /your/path/to/project
+  <Directory "/your/path/to/project">
       AllowOverride All
       Allow from All
   </Directory>
