@@ -17,14 +17,18 @@ class Controller
 		//  find the mode, what is happening at this point. A save, show a blank form,
 		//	an edit, or a list of blogs.
 		$mode = '';
-		if (isset($_POST)) {
+		if (isset($_POST['submit'])) {
 			$mode = 'save';
-		} else if (isset($_GET)) {
-			$mode = 'list';
-		} else {
+		} else if (isset($_GET['id'])) {
+			$mode = 'edit';
+		} else if (isset($_GET['add'])){
 			$mode = 'form';
+		} else {
+			$mode = 'list';
 		}
 
+		$mode = 'list';
+		
 		try {
 			
 			switch ($mode){
@@ -36,8 +40,8 @@ class Controller
 				$this->view->render();
 				break;
 
+				case 'form':
 				// this case is more like an interface in development
-				// load blog entry object with id
 				// load the form template
 				$this->view = new Templater('form.tpl.php');
 				//iterate through post variables and set them as template variables
@@ -48,18 +52,24 @@ class Controller
 				break;
 
 				case 'list':
-				// load blog entry object with id
+				$this->view = new Templater('list.tpl.php');
 				// show the list of blogs
+				try {
+					$database = new Database();
+					$connection = $database->getConnection();
+				} catch (Exception $e) {
+					echo $e->getMessage();
+				}
+
 				$this->view->render();
 				break;
 
 				case 'save':
 				$blog = new BlogEntry();
-				var_dump($blog);
 				break;
 
 				default:
-				exit("no mode set");
+				throw new Exception("no mode set");
 			
 			}
 		

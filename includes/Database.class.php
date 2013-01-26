@@ -9,7 +9,7 @@ class Database
 	private $user;
 	private $pass;
 
-	private __construct()
+	public function __construct()
 	{
 		self::getConfig();
 	}
@@ -19,10 +19,10 @@ class Database
 	*/
 	private function getConfig()
 	{
-		$this->host = '';
-		$this->dbname = '';
-		$this->user = '';
-		$this->pass = '';
+		$this->host = DB_HOST; 
+		$this->dbname = DB_NAME;
+		$this->user = DB_USERNAME;
+		$this->pass = DB_PASSWORD;
 	}
 
 	/**
@@ -30,7 +30,7 @@ class Database
 	*	@return	Object dbal
 	*
 	*/
-	private function getConnection()
+	public function getConnection()
 	{
 		$this->dbal = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->user, $this->pass);
 	}
