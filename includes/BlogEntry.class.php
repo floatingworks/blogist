@@ -5,17 +5,21 @@
 *	@params String title, String blogContent
 *	@return Boolean 
 */
-class Blogentry 
+class Blogentry extends Model
 {
 	public $title;
 	public $blogContent;
+	public $table = 'blogist';
+	public $database;
 
 	/**
 	* Blogentry constructor
 	*/
-	function Blogentry ()
+	function __construct ($titl, $blogConten, $db)
 	{
-		return true;
+		$this->title = ($titl);
+		$this->blogContent = ($blogConten);
+		$this->database = $db;
 	}
 
 	function getBlogs ()
@@ -25,8 +29,10 @@ class Blogentry
 
 	function save ()
 	{
+		//have to send an array so create array
+		$values = Array('title' => $this->title, 'content' => $this->blogContent);
 		// save the object to db
-		return true;
+		$this->database->insert('blogentry', $values);
 	}
 }
 	

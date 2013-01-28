@@ -1,10 +1,11 @@
 <?php
 
-class Controller 
+class Controller extends Model
 {
 
 	public $view;
 	public $mode;
+	public $database;
 
 	/**
 	*	constructor
@@ -13,7 +14,9 @@ class Controller
 	*/
 	function __construct()  
 	{
-		
+		// get the database connection
+		$this->getDB();
+
 		//  find the mode, what is happening at this point. A save, show a blank form,
 		//	an edit, or a list of blogs.
 		$mode = '';
@@ -24,11 +27,9 @@ class Controller
 		} else if (isset($_GET['add'])){
 			$mode = 'form';
 		} else {
-			$mode = 'list';
+			$mode = 'form';
 		}
 
-		$mode = 'list';
-		
 		try {
 			
 			switch ($mode){
@@ -52,20 +53,17 @@ class Controller
 				break;
 
 				case 'list':
-				$this->view = new Templater('list.tpl.php');
-				// show the list of blogs
-				try {
-					$database = new Database();
-					$connection = $database->getConnection();
-				} catch (Exception $e) {
-					echo $e->getMessage();
-				}
-
-				$this->view->render();
+				$this->doList();
 				break;
 
 				case 'save':
-				$blog = new BlogEntry();
+				try {
+					$blog = new BlogEntry($_POST['title'], $_POST['blogcontent'], $this->database);
+					$blog->save();
+					$this->doList();
+				} catch (Exception $e) {
+					echo $e->getMessage();
+				}
 				break;
 
 				default:
@@ -76,6 +74,24 @@ class Controller
 		} catch (Exception $e) {
 		    echo $e->getMessage();
 		}
+	}
+
+	public function getDb()
+	{
+		try {
+			$this->database = new Database();
+			$this->database->getConnection();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
+
+	public function doList()
+	{
+		$this->view = new Templater('list.tpl.php');
+        // show the list of blogs
+		$this->database->selectAll('blogentry');
+	    $this->view->render();
 	}
 }
 
