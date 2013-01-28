@@ -16,19 +16,22 @@ class Controller extends Model
 	{
 		// get the database connection
 		$this->getDB();
-
+		
+		// check to see if this is a save , if so do the save then unset the submit variable.
+		if (isset($_POST['submit'])) {
+			try {
+				$blog = new BlogEntry($_POST['title'], $_POST['blogcontent'], $this->database);
+				$blog->save();
+				$this->doList();
+				unset($_POST['submit']);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
+		} 
+		
 		//  find the mode, what is happening at this point. A save, show a blank form,
 		//	an edit, or a list of blogs.
-		$mode = '';
-		if (isset($_POST['submit'])) {
-			$mode = 'save';
-		} else if (isset($_GET['id'])) {
-			$mode = 'edit';
-		} else if (isset($_GET['add'])){
-			$mode = 'form';
-		} else {
-			$mode = 'form';
-		}
+		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'form';
 
 		try {
 			
@@ -56,18 +59,8 @@ class Controller extends Model
 				$this->doList();
 				break;
 
-				case 'save':
-				try {
-					$blog = new BlogEntry($_POST['title'], $_POST['blogcontent'], $this->database);
-					$blog->save();
-					$this->doList();
-				} catch (Exception $e) {
-					echo $e->getMessage();
-				}
-				break;
-
 				default:
-				throw new Exception("no mode set");
+				throw new Exception("invalid mode");
 			
 			}
 		

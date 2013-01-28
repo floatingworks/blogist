@@ -13,26 +13,35 @@ class Blogentry extends Model
 	public $database;
 
 	/**
-	* Blogentry constructor
+	* 	Blogentry constructor
+	*	@param String t		//title  
+	*	@param String bc 	//blogcontent
+	*	@param String db	//database
 	*/
-	function __construct ($titl, $blogConten, $db)
+	protected function __construct ($t, $bc, $db)
 	{
-		$this->title = ($titl);
-		$this->blogContent = ($blogConten);
+		$this->title = $t;
+		$this->blogContent = $bc;
 		$this->database = $db;
 	}
 
-	function getBlogs ()
+	protected function getBlogs ()
 	{
 		return true;
 	}
 
-	function save ()
+	protected function save ()
 	{
 		//have to send an array so create array
 		$values = Array('title' => $this->title, 'content' => $this->blogContent);
 		// save the object to db
+		$this->database->getConnection();
 		$this->database->insert('blogentry', $values);
+	}
+
+	protected function validate ()
+	{
+		return;
 	}
 }
 	

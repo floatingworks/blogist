@@ -37,12 +37,12 @@ class Database
 		//$this->dbal->exec("SET CHARACTER SET utf8");
 	}
 
-	public function selectAll($tablename = '')
+	public function selectAll($tablename)
 	{
-		$sth = $this->dbal->prepare('SELECT * FROM {$tablename}');
+		$sth = $this->dbal->prepare('SELECT * FROM ' . $tablename);
 		$sth->execute();
 		$result = $sth->fetchAll();
-		var_dump($result);
+		print_r($result);
 	}
 
 	public function insert($tablename, $value)
