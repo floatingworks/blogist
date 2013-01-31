@@ -1,5 +1,8 @@
+<div id="results">
 <?php
-
-var_dump($this->var);
-
+//print_r($this->var['array']);
+foreach ($this->var['array'] as $blogentry) {
+	echo "<li><a href=\"?mode=edit&id={$blogentry['id']}\">{$blogentry['title']}</a></li>";
+}
 ?>
+</div>

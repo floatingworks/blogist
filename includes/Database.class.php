@@ -3,7 +3,7 @@
 class Database 
 {
 
-	protected static $dbal;
+	public static $dbal;
 	private $host;
 	private $dbname;
 	private $user;
@@ -11,7 +11,8 @@ class Database
 
 	public function __construct()
 	{
-		$this->dbal = self::getConfig();
+		self::getConfig();
+		// self::getConnection();  ** do we want to get the connection in the constructor? Or do we want the caller to initiate the connection as a lazy loader?
 	}
 
 	/**
@@ -41,19 +42,27 @@ class Database
 	{
 		$sth = $this->dbal->prepare('SELECT * FROM ' . $tablename);
 		$sth->execute();
-		$result = $sth->fetchAll();
-		print_r($result);
+		return $sth->fetchAll();
 	}
 
-	public function insert($tablename, $value)
+	public function select($tablename, $column, $search)
+	{
+		$sql = "SELECT * FROM $tablename WHERE $column = :id";
+		$sth = $this->dbal->prepare($sql);
+		$sth->bindParam(':id', $search);
+		$sth->execute();
+		$result = $sth->fetch(PDO::FETCH_ASSOC);
+		return $result;
+	}
+
+	public function insert($tablename, $value, $duplicateKey = '')
 	{
 		foreach ($value as $field => $v) {
 			$ins[] = ':' . $field;
 		}
 		$ins = implode(',', $ins);
 		$fields = implode(',', array_keys($value));
-		$sql = "INSERT INTO $tablename ($fields) VALUES ($ins)";
-
+		$sql = "INSERT INTO $tablename ($fields) VALUES ($ins) $duplicateKey";
 		$sth = $this->dbal->prepare($sql);
 		foreach ($value as $f => $v) {
 			$sth->bindValue(':' . $f, $v);

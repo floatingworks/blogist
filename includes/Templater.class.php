@@ -1,6 +1,6 @@
 <?php
 
-class Templater
+class Templater extends Model
 {
 	private $template;
 	// template directory absolute path.  This may need to be moved to a config file
@@ -12,6 +12,7 @@ class Templater
 	*/
 	function __construct($template=null)
 	{
+		parent::__construct();
 		$this->load($template);
 	}
 	
