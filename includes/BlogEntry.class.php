@@ -10,6 +10,7 @@ class Blogentry extends Model
 	public $id;
 	public $title;
 	public $blogContent;
+	public $timeposted;
 	public $isDeleted;
 	public $table = 'blogist';
 
@@ -25,6 +26,7 @@ class Blogentry extends Model
 		$this->id = $id;
 		$this->title = $t;
 		$this->blogContent = $bc;
+		$this->timeposted = time();
 		$this->isDeleted = 0;
 	}
 
@@ -40,6 +42,9 @@ class Blogentry extends Model
 		$this->id = $result['id'];
 		$this->title = $result['title'];
 		$this->blogContent = $result['content'];
+		$this->timeposted = $result['time'];
+		$this->isDeleted = $result['isdeleted'];
+		var_dump($result);
 	}
 
 
@@ -52,7 +57,7 @@ class Blogentry extends Model
 		$values = $idKeyVal + $values;
 		// save the object to db
 		$this->dbal->getConnection();
-		$duplicateUpdate = " ON DUPLICATE KEY UPDATE title = '$this->title', content = '$this->blogContent', isDeleted = '$this->isDeleted'";
+		$duplicateUpdate = " ON DUPLICATE KEY UPDATE title = '$this->title', content = '$this->blogContent', isDeleted = '$this->isDeleted', timeposted ='$this->timeposted'";
 		$this->dbal->insert('blogentry', $values, $duplicateUpdate);
 	}
 

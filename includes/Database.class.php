@@ -40,7 +40,8 @@ class Database
 
 	public function selectAll($tablename)
 	{
-		$sth = $this->dbal->prepare('SELECT * FROM ' . $tablename);
+		$sql = "SELECT * FROM $tablename";
+		$sth = $this->dbal->prepare($sql);
 		$sth->execute();
 		return $sth->fetchAll();
 	}
