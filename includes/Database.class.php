@@ -29,8 +29,6 @@ class Database
 
 	/**
 	* 	lazy loaded getConnection method
-	*	@return	Object dbal
-	*
 	*/
 	public function getConnection()
 	{
@@ -38,14 +36,25 @@ class Database
 		//$this->dbal->exec("SET CHARACTER SET utf8");
 	}
 
+	/**
+	* @param tablename the name of the table to use
+	* @return result Array of data from the query
+	*/
 	public function selectAll($tablename)
 	{
 		$sql = "SELECT * FROM $tablename";
 		$sth = $this->dbal->prepare($sql);
 		$sth->execute();
-		return $sth->fetchAll();
+		$result = $sth->fetchAll();
+		return $result;
 	}
-
+	
+	/**
+	* @param String tablename the name of the table to use
+	* @param String column the column to search on
+	* @param String search the search string
+	* @return Array result An array as specified by FETCH_ASSOC
+	*/
 	public function select($tablename, $column, $search)
 	{
 		$sql = "SELECT * FROM $tablename WHERE $column = :id";
@@ -56,6 +65,11 @@ class Database
 		return $result;
 	}
 
+	/**
+	* @param String tablename the table to search on
+	* @param Array value an array of keys and values to insert into the db
+	* @param String duplicateKey To determine whether this is an insert or an update
+	*/
 	public function insert($tablename, $value, $duplicateKey = '')
 	{
 		foreach ($value as $field => $v) {

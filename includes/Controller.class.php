@@ -35,6 +35,10 @@ class Controller extends Model
 			$this->mode = 'list';
 		} 
 
+		if (!isset($_SESSION['usersession'])) {
+			$this->mode = 'login';
+		}
+
 		try {
 			
 			// load the template
@@ -42,11 +46,19 @@ class Controller extends Model
 
 			switch ($this->mode){
 
+				/** check for a login session
+				*	if no session, show the login form
+				**/
+				case 'login':
+					$user =  new User();
+					$user->authenticate($_POST['username'], $_POST['password']);
+				break;
+
 				/** edit an entry */
 				case 'edit':
 					$blog = new BlogEntry();
 					$blog->loadBlogById($_GET['id']);
-					$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id);
+					$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
 					foreach ($value as $index => $val) {
 						$this->view->set($index, $val);
 					}

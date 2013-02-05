@@ -42,23 +42,27 @@ class Blogentry extends Model
 		$this->id = $result['id'];
 		$this->title = $result['title'];
 		$this->blogContent = $result['content'];
-		$this->timeposted = $result['time'];
+		$this->timeposted = $result['timeposted'];
 		$this->isDeleted = $result['isdeleted'];
-		var_dump($result);
 	}
 
 
 	public function save ()
 	{
-		// have to send an array so create array
-		$values = Array('title' => $this->title, 'content' => $this->blogContent, 'isDeleted' => $this->isDeleted);
-		// check if the object is new and has no id, if so dont add a Duplicate Key Update
-		is_null($this->id) ? $idKeyVal = Array() : $idKeyVal = Array('id' => $this->id);
-		$values = $idKeyVal + $values;
-		// save the object to db
-		$this->dbal->getConnection();
-		$duplicateUpdate = " ON DUPLICATE KEY UPDATE title = '$this->title', content = '$this->blogContent', isDeleted = '$this->isDeleted', timeposted ='$this->timeposted'";
-		$this->dbal->insert('blogentry', $values, $duplicateUpdate);
+		try {
+			// have to send an array of key => values to the database method
+			$values = Array('title' => $this->title, 'content' => $this->blogContent, 'isDeleted' => $this->isDeleted);
+			// check if this entry has an existing id.  If not then it is a new entry, so we want the db to auto increment.
+			// else set the id and then add the two arrays together.
+			is_null($this->id) ? $idKeyVal = Array() : $idKeyVal = Array('id' => $this->id);
+			$values = $idKeyVal + $values;
+			// save the object to db
+			$this->dbal->getConnection();
+			$duplicateUpdate = " ON DUPLICATE KEY UPDATE title = '$this->title', content = '$this->blogContent', isDeleted = '$this->isDeleted', timeposted ='$this->timeposted'";
+			$this->dbal->insert('blogentry', $values, $duplicateUpdate);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
 
 	public function validate ()
