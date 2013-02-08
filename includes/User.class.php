@@ -13,9 +13,22 @@ class User extends Model
 		parent::__construct();
 	}
 
-	public function authenticate($username, $password)
+	/**
+	* @param String username the users unique identification 
+	* @param String password the users password
+	* @return Boolean is this a valid user?
+	*/
+	public function authenticate($username = '', $password = '')
 	{
 		return true;
 	}
-		
+
+	/**
+	* return String username
+	*/
+	public function getUsername()
+	{
+		return "fred";
+		return $this->username;
+	}
 }
