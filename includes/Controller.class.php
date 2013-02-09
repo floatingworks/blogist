@@ -15,22 +15,25 @@ class Controller extends Model
 		// first call the parent constructor to get the database 
 		parent::__construct();
 
-
 		// is this a login request.
 		if (!empty($_POST['username']) && !empty($_POST['password'])) {
 			$user =  new User();
 			// if this is a valid username password combo start the session and set session variables
 			if ($user->authenticate($_POST['username'], $_POST['password'])) {
+				echo "logging in...";
 				$_SESSION['id'] = $user->getUsername();
 				unset($_POST['username']);
 				unset($_POST['password']);
 			}
 		}
 		
-		//  find the mode, what is happening at this point. A save, show a blank form,
-		//	an edit, or a list of blogs.
 		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
-		$mode = (isset($_SESSION['id']) && $mode !== 'logout') ? $mode : 'login';
+
+		echo $mode;
+
+		if (!isset($_SESSION['id'])) {
+			$mode='login';
+		}
 		
 		// check to see if this is a save , if so do the save then unset the submit variable.
 		// is this a save after an edit, in which case there should be an id in $_GET['id']
@@ -47,7 +50,7 @@ class Controller extends Model
 				echo $e->getMessage();
 			}
 			$mode = 'list';
-		} 
+		}
 
 		// load header template
 		$this->view = new Templater('header.tpl.php');
@@ -65,6 +68,12 @@ class Controller extends Model
 				*	if no session, show the login form
 				**/
 				case 'login':
+				break;
+				
+				/** check for a login session
+				*	if no session, show the login form
+				**/
+				case 'logout':
 				break;
 
 				/** edit an entry */

@@ -2,8 +2,8 @@
 
 // includes folder - TODO - should write an autoloader here
 require_once('./includes/Model.class.php');
-require_once('./includes/Controller.class.php');
 require_once('./includes/User.class.php');
+require_once('./includes/Controller.class.php');
 require_once('./includes/Templater.class.php');
 require_once('./includes/Model.class.php');
 require_once('./includes/BlogEntry.class.php');
