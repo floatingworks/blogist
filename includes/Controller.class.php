@@ -20,7 +20,8 @@ class Controller extends Model
 			$user =  new User();
 			// if this is a valid username password combo start the session and set session variables
 			if ($user->authenticate($_POST['username'], $_POST['password'])) {
-				echo "logging in...";
+				$user->loadUser($_POST['username']);
+				var_dump($user);
 				$_SESSION['id'] = $user->getUsername();
 				unset($_POST['username']);
 				unset($_POST['password']);
@@ -29,7 +30,10 @@ class Controller extends Model
 		
 		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
 
-		echo $mode;
+		if ($mode === 'logout') {
+			session_destroy();
+			$mode = 'login';
+		}
 
 		if (!isset($_SESSION['id'])) {
 			$mode='login';
@@ -70,12 +74,6 @@ class Controller extends Model
 				case 'login':
 				break;
 				
-				/** check for a login session
-				*	if no session, show the login form
-				**/
-				case 'logout':
-				break;
-
 				/** edit an entry */
 				case 'edit':
 					$blog = new BlogEntry();
