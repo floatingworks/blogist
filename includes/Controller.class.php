@@ -4,7 +4,6 @@ class Controller extends Model
 {
 
 	public $view;
-	public $mode;
 
 	/**
 	*	constructor
@@ -15,45 +14,66 @@ class Controller extends Model
 	{
 		// first call the parent constructor to get the database 
 		parent::__construct();
-		
-		//  find the mode, what is happening at this point. A save, show a blank form,
-		//	an edit, or a list of blogs.
-		$this->mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
 
+		// is this a login request.
+		if (!empty($_POST['username']) && !empty($_POST['password'])) {
+			$user =  new User();
+			// if this is a valid username password combo start the session and set session variables
+			if ($user->authenticate($_POST['username'], $_POST['password'])) {
+				$user->loadUser($_POST['username']);
+				var_dump($user);
+				$_SESSION['id'] = $user->getUsername();
+				unset($_POST['username']);
+				unset($_POST['password']);
+			}
+		}
+		
+		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
+
+		if ($mode === 'logout') {
+			session_destroy();
+			$mode = 'login';
+		}
+
+		if (!isset($_SESSION['id'])) {
+			$mode='login';
+		}
+		
 		// check to see if this is a save , if so do the save then unset the submit variable.
 		// is this a save after an edit, in which case there should be an id in $_GET['id']
 		if (isset($_POST['submit'])) {
 			try {
 				isset($_POST['id']) ? $id = $_POST['id'] : $id = NULL;
-				$blog = new BlogEntry($id, $_POST['title'], $_POST['blogcontent']);
+				isset($_POST['title']) ? $title = $_POST['title'] : $title = NULL;
+				isset($_POST['blogcontent']) ? $blogcontent = $_POST['blogcontent'] : $blogcontent = NULL;
+				$blog = new BlogEntry($id, $title, $blogcontent);
 				$blog->save();
 				// delete the post variable so that we don't multiply add more records
 				unset($_POST['submit']);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}
-			$this->mode = 'list';
-		} 
-
-		if (!isset($_SESSION['usersession'])) {
-			$this->mode = 'login';
+			$mode = 'list';
 		}
+
+		// load header template
+		$this->view = new Templater('header.tpl.php');
+		$this->view->render();
 
 		try {
 			
-			// load the template
-			$this->view = new Templater($this->mode . '.tpl.php');
-
-			switch ($this->mode){
+			// load the appropriate template for the mode
+			$this->view = new Templater($mode . '.tpl.php');
+			
+			// this is a template / view controller, stop trying to put model logic in here
+			switch ($mode){
 
 				/** check for a login session
 				*	if no session, show the login form
 				**/
 				case 'login':
-					$user =  new User();
-					$user->authenticate($_POST['username'], $_POST['password']);
 				break;
-
+				
 				/** edit an entry */
 				case 'edit':
 					$blog = new BlogEntry();
