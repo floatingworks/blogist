@@ -4,43 +4,43 @@ class Controller extends Model
 {
 
 	public $view;
+	public $user;
 
 	/**
 	*	constructor
-	*	@param string $mode
-	*	@return Object $view
 	*/
 	function __construct()  
 	{
 		// first call the parent constructor to get the database 
 		parent::__construct();
 
-		// is this a login request.
+		// instantiate a new user
+		$this->user = new User();
+		
+		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
+
+		// login handler
 		if (!empty($_POST['username']) && !empty($_POST['password'])) {
-			$user =  new User();
 			// if this is a valid username password combo start the session and set session variables
-			if ($user->authenticate($_POST['username'], $_POST['password'])) {
-				$user->loadUser($_POST['username']);
-				var_dump($user);
-				$_SESSION['id'] = $user->getUsername();
+			if ($this->user->authenticate($_POST['username'], $_POST['password'])) {
+				$this->user->loadUser($_POST['username']);
+				$this->user->setIsLoggedIn(true);
+				$_SESSION['id'] = $this->user->getUsername();
 				unset($_POST['username']);
 				unset($_POST['password']);
+				$mode = 'login';
 			}
 		}
 		
-		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
-
+		// logout handler
 		if ($mode === 'logout') {
 			session_destroy();
+			session_unset();
+			unset($_SESSION['id']);
 			$mode = 'login';
 		}
 
-		if (!isset($_SESSION['id'])) {
-			$mode='login';
-		}
-		
-		// check to see if this is a save , if so do the save then unset the submit variable.
-		// is this a save after an edit, in which case there should be an id in $_GET['id']
+		// blog save handler
 		if (isset($_POST['submit'])) {
 			try {
 				isset($_POST['id']) ? $id = $_POST['id'] : $id = NULL;
@@ -56,6 +56,17 @@ class Controller extends Model
 			$mode = 'list';
 		}
 
+		// check for new user registration
+		if (isset($_POST['passwordsubmit'])) {
+			$this->registrationHandler();
+		}
+
+		// load the current user if this is a session
+		if (isset($_SESSION['id'])) {
+			$this->user->loadUser($_SESSION['id']);
+			$this->user->setIsLoggedIn(true);
+		}
+		
 		// load header template
 		$this->view = new Templater('header.tpl.php');
 		$this->view->render();
@@ -76,30 +87,40 @@ class Controller extends Model
 				
 				/** edit an entry */
 				case 'edit':
-					$blog = new BlogEntry();
-					$blog->loadBlogById($_GET['id']);
-					$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
-					foreach ($value as $index => $val) {
-						$this->view->set($index, $val);
+					if ($this->authTest()) {
+						$blog = new BlogEntry();
+						$blog->loadBlogById($_GET['id']);
+						$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
+						foreach ($value as $index => $val) {
+							$this->view->set($index, $val);
+						}
 					}
 				break;
 
 				/** show the form */
 				case 'form':
-					foreach ($_POST as $index => $value) {
-						$this->view->set($index, $value);
+					if ($this->authTest()) {
+						foreach ($_POST as $index => $value) {
+							$this->view->set($index, $value);
+						}
 					}
 				break;
 				
 				/** list all items */
 				case 'list':
-					$this->dbal->getConnection();
-					$results = $this->dbal->selectAll('blogentry');
-					$this->view->set('array', $results);
+					if ($this->authTest()) {
+						$this->dbal->getConnection();
+						$results = $this->dbal->selectAll('blogentry');
+						$this->view->set('array', $results);
+					}
 				break;
 
 				/** show an individual item */
 				case 'show':
+				break;
+
+				/** registration form */
+				case 'register':
 				break;
 
 				/** default throws an exception for invalid mode */
@@ -115,5 +136,15 @@ class Controller extends Model
 		    echo $e->getMessage();
 		}
 	}
+
+	/**
+	* Check whether there is a current logged in user
+	*/
+
+	public function authTest()
+	{
+		return $this->user->getIsLoggedIn();
+	}
+
 }
 ?>

@@ -60,4 +60,20 @@ class User extends Model
 		return $this->username;
 	}
 
+	/**
+	* user log in check
+	*/
+	public function getIsLoggedIn()
+	{
+		return $this->isLoggedIn;
+	}
+	
+	/**
+	* set authentication
+	* @param Boolean state the logged in state
+	*/
+	public function setIsLoggedIn($state)
+	{
+		$this->isLoggedIn = $state;
+	}
 }
