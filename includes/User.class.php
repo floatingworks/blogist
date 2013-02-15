@@ -53,6 +53,45 @@ class User extends Model
 	}
 
 	/**
+	* A method to register a user on the system
+	* @params String username The chosen username
+	* @params String password1 The password to be used
+	* @params String password2 The password as a duplicate check
+	* @return Boolean Has the user been added
+	* @TODO check that passwords match
+    * @TODO check that username is unique
+	* @TODO insert values into user table
+	*/
+	public function registerUser($username, $password1, $password2, $email)
+	{
+		$isAlreadyUsername = User::doesUserNameAlreadyExist($username, $this->dbal);
+		$passwordthesame = ($password1 == $password2);
+		if (!$isAlreadyUsername && $passwordthesame) {
+			// registration process requirements satisfied. Username unique and passwords match
+			$this->dbal->getConnection();
+			// create fields for insert statement
+			$value = Array('username' => $username, 'password' => md5($username.$password1), 'email' => $email);
+			$result = $this->dbal->insert('user', $value);
+			var_dump($result);
+		} else {
+		  	echo "registration process failed";
+		}
+	}
+
+	/**
+	* Check if provided username already exists on the system
+	* @params String username the username to check
+	* @return Boolean Whether the username is on the system already
+	*/
+	public static function doesUsernameAlreadyExist($username, &$dbal)
+	{
+		$dbal->getConnection();
+	    $result = $dbal->select('user', 'username', $username);
+		// select will return an array if the user exists, but false if no record is found.
+		return $result;
+	}
+
+	/**
 	* return String username
 	*/
 	public function getUsername()

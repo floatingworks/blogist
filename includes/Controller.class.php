@@ -58,7 +58,7 @@ class Controller extends Model
 
 		// check for new user registration
 		if (isset($_POST['passwordsubmit'])) {
-			$this->registrationHandler();
+			$this->registrationHandler($_POST['username'], $_POST['password1'], $_POST['password2'], $_POST['email']);
 		}
 
 		// load the current user if this is a session
@@ -145,6 +145,20 @@ class Controller extends Model
 	{
 		return $this->user->getIsLoggedIn();
 	}
-
+	
+	/**
+	* @TODO check that passwords match
+	* @TODO check that username is unique
+	* @TODO insert values into user table
+	*/
+	public function registrationHandler($username, $password1, $password2, $email)
+	{
+		$user = new User();
+		$user->registerUser($username, $password1, $password2, $email);
+		//$this->dbal->getConnection();
+		//$result = $this->dbal->select('user', 'username', $username);
+		//var_dump($result);		
+		//return $valid_user;
+	}
 }
 ?>
