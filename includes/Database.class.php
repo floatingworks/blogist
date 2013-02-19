@@ -69,6 +69,7 @@ class Database
 	* @param String tablename the table to search on
 	* @param Array value an array of keys and values to insert into the db
 	* @param String duplicateKey To determine whether this is an insert or an update
+	* @return Int lastInsertId The id of the last row inserted.
 	*/
 	public function insert($tablename, $value, $duplicateKey = '')
 	{
@@ -83,5 +84,6 @@ class Database
 			$sth->bindValue(':' . $f, $v);
 		}
 		$sth->execute();
+		return $this->dbal->lastInsertId();
 	}
 }

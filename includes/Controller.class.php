@@ -2,7 +2,6 @@
 
 class Controller extends Model
 {
-
 	public $view;
 	public $user;
 
@@ -39,6 +38,12 @@ class Controller extends Model
 			unset($_SESSION['id']);
 			$mode = 'login';
 		}
+		
+		// load the current user if this is a session
+		if (isset($_SESSION['id'])) {
+			$this->user->loadUser($_SESSION['id']);
+			$this->user->setIsLoggedIn(true);
+		}
 
 		// blog save handler
 		if (isset($_POST['submit'])) {
@@ -47,7 +52,10 @@ class Controller extends Model
 				isset($_POST['title']) ? $title = $_POST['title'] : $title = NULL;
 				isset($_POST['blogcontent']) ? $blogcontent = $_POST['blogcontent'] : $blogcontent = NULL;
 				$blog = new BlogEntry($id, $title, $blogcontent);
-				$blog->save();
+				$userid = $this->user->getUserId();
+				$blogid = $blog->save($userid);
+				// we need to add the posted by entry for this saved blog
+				// $postedby = new PostedBy();
 				// delete the post variable so that we don't multiply add more records
 				unset($_POST['submit']);
 			} catch (Exception $e) {
@@ -61,11 +69,6 @@ class Controller extends Model
 			$this->registrationHandler($_POST['username'], $_POST['password1'], $_POST['password2'], $_POST['email']);
 		}
 
-		// load the current user if this is a session
-		if (isset($_SESSION['id'])) {
-			$this->user->loadUser($_SESSION['id']);
-			$this->user->setIsLoggedIn(true);
-		}
 		
 		// load header template
 		$this->view = new Templater('header.tpl.php');

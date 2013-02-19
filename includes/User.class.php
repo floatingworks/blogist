@@ -72,7 +72,6 @@ class User extends Model
 			// create fields for insert statement
 			$value = Array('username' => $username, 'password' => md5($username.$password1), 'email' => $email);
 			$result = $this->dbal->insert('user', $value);
-			var_dump($result);
 		} else {
 		  	echo "registration process failed";
 		}
@@ -92,11 +91,19 @@ class User extends Model
 	}
 
 	/**
-	* return String username
+	* @return String username
 	*/
 	public function getUsername()
 	{
 		return $this->username;
+	}
+	
+	/**
+	* @return Int userid
+	*/
+	public function getUserId()
+	{
+		return $this->id;
 	}
 
 	/**
