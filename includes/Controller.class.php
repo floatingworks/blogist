@@ -109,11 +109,11 @@ class Controller extends Model
 					}
 				break;
 				
-				/** list all items */
+				/** list all users blogs */
 				case 'list':
 					if ($this->authTest()) {
 						$this->dbal->getConnection();
-						$results = $this->dbal->selectAll('blogentry');
+						$results = $this->dbal->selectAllUsersBlogs($this->user->getUserId());
 						$this->view->set('array', $results);
 					}
 				break;

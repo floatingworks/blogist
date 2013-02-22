@@ -50,6 +50,19 @@ class Database
 	}
 	
 	/**
+	* @param tablename the name of the table to use
+	* @return result Array of data from the query
+	*/
+	public function selectAllUsersBlogs($userid)
+	{
+		$sql = "select * from postedby pb LEFT JOIN blogentry be ON pb.blogentryid = be.id WHERE pb.userid = $userid AND be.id IS NOT NULL;";
+		$sth = $this->dbal->prepare($sql);
+		$sth->execute();
+		$result = $sth->fetchAll();
+		return $result;
+	}
+	
+	/**
 	* @param String tablename the name of the table to use
 	* @param String column the column to search on
 	* @param String search the search string
