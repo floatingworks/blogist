@@ -47,7 +47,7 @@ class User extends Model
 		foreach ($results as $key => $value) {
 			//echo "key : {$key}";
 			//echo " - value : {$value}";
-			//echo "<br />";
+			//cho "<br />";
 			$this->$key = $value;
 		}
 	}

@@ -10,13 +10,10 @@ class Controller extends Model
 	*/
 	function __construct()  
 	{
-		// first call the parent constructor to get the database 
 		parent::__construct();
-
-		// instantiate a new user
 		$this->user = new User();
-		
-		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
+		//$mode = isset($_GET['mode']) ? filter_input($_GET['mode']) : '';
+		$mode = isset($_GET['mode']) ? $_GET['mode'] : 'list';
 
 		// login handler
 		if (!empty($_POST['username']) && !empty($_POST['password'])) {
@@ -27,9 +24,9 @@ class Controller extends Model
 				$_SESSION['id'] = $this->user->getUsername();
 				unset($_POST['username']);
 				unset($_POST['password']);
-				$mode = 'login';
 			}
-		}
+		} else {
+        }
 		
 		// logout handler
 		if ($mode === 'logout') {
@@ -44,6 +41,7 @@ class Controller extends Model
 			$this->user->loadUser($_SESSION['id']);
 			$this->user->setIsLoggedIn(true);
 		}
+
 
 		// blog save handler
 		if (isset($_POST['submit'])) {
@@ -69,7 +67,6 @@ class Controller extends Model
 			$this->registrationHandler($_POST['username'], $_POST['password1'], $_POST['password2'], $_POST['email']);
 		}
 
-		
 		// load header template
 		$this->view = new Templater('header.tpl.php');
 		$this->view->render();
@@ -90,32 +87,32 @@ class Controller extends Model
 				
 				/** edit an entry */
 				case 'edit':
-					if ($this->authTest()) {
+				//	if ($this->authTest()) {
 						$blog = new BlogEntry();
 						$blog->loadBlogById($_GET['id']);
 						$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
 						foreach ($value as $index => $val) {
 							$this->view->set($index, $val);
 						}
-					}
+				//	}
 				break;
 
 				/** show the form */
 				case 'form':
-					if ($this->authTest()) {
+				//	if ($this->authTest()) {
 						foreach ($_POST as $index => $value) {
 							$this->view->set($index, $value);
 						}
-					}
+				//	}
 				break;
 				
 				/** list all users blogs */
 				case 'list':
-					if ($this->authTest()) {
+				//	if ($this->authTest()) {
 						$this->dbal->getConnection();
 						$results = $this->dbal->selectAllUsersBlogs($this->user->getUserId());
 						$this->view->set('array', $results);
-					}
+				//	}
 				break;
 
 				/** show an individual item */
@@ -164,4 +161,3 @@ class Controller extends Model
 		//return $valid_user;
 	}
 }
-?>
