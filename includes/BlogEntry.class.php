@@ -59,7 +59,7 @@ class Blogentry extends Model
 	*/
 	public function save ($userid)
 	{
-//		try {
+		try {
 			// have to send an array of key => values to the database method
 			$values = Array('title' => $this->title, 'content' => $this->blogContent, 'isDeleted' => $this->isDeleted, 'timeposted' => $this->timeposted);
 
@@ -73,15 +73,14 @@ class Blogentry extends Model
 			$duplicateUpdate = " ON DUPLICATE KEY UPDATE title = '$this->title', content = '$this->blogContent', isDeleted = '$this->isDeleted', timeposted ='$this->timeposted'";
             // we need the id of the blog entry and the user id to add to our postedby table
 			$lastInsertId = $this->dbal->insert('blogentry', $values, $duplicateUpdate);
-
 			
             // lastInsertId needs to go into the postedby table along with the user id
 			// so we need to build the key => values array
 			$values = Array('blogentryid' => $lastInsertId, 'userid' => $userid);
 			$this->dbal->insert('postedby', $values);
-//		} catch (Exception $e) {
-//			echo $e->getMessage();
-//		}
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
 
 	public function validate ()

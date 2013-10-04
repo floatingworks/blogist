@@ -76,59 +76,61 @@ class Controller extends Model
 			// load the appropriate template for the mode
 			$this->view = new Templater($mode . '.tpl.php');
 			
-			// this is a template / view controller, stop trying to put model logic in here
-			switch ($mode){
-
-				/** check for a login session
-				*	if no session, show the login form
-				**/
-				case 'login':
-				break;
-				
-				/** edit an entry */
-				case 'edit':
-				//	if ($this->authTest()) {
-						$blog = new BlogEntry();
-						$blog->loadBlogById($_GET['id']);
-						$value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
-						foreach ($value as $index => $val) {
-							$this->view->set($index, $val);
-						}
-				//	}
-				break;
-
-				/** show the form */
-				case 'form':
-				//	if ($this->authTest()) {
-						foreach ($_POST as $index => $value) {
-							$this->view->set($index, $value);
-						}
-				//	}
-				break;
-				
-				/** list all users blogs */
-				case 'list':
-				//	if ($this->authTest()) {
-						$this->dbal->getConnection();
-						$results = $this->dbal->selectAllUsersBlogs($this->user->getUserId());
-						$this->view->set('array', $results);
-				//	}
-				break;
-
-				/** show an individual item */
-				case 'show':
-				break;
-
-				/** registration form */
-				case 'register':
-				break;
-
-				/** default throws an exception for invalid mode */
-				default:
-				throw new Exception("invalid mode");
+			if ($this->authTest()) {
 			
-			}
+                // this is a template / view controller, stop trying to put model logic in here
+                switch ($mode){
 
+                    /** check for a login session
+                    *	if no session, show the login form
+                    **/
+                    case 'login':
+                    break;
+                    
+                    /** edit an entry */
+                    case 'edit':
+                    //	if ($this->authTest()) {
+                            $blog = new BlogEntry();
+                            $blog->loadBlogById($_GET['id']);
+                            $value = Array('title' => $blog->title, 'blogcontent' => $blog->blogContent, 'id' => $blog->id, 'timeposted' => $blog->timeposted);
+                            foreach ($value as $index => $val) {
+                                $this->view->set($index, $val);
+                            }
+                    //	}
+                    break;
+
+                    /** show the form */
+                    case 'form':
+                    //	if ($this->authTest()) {
+                            foreach ($_POST as $index => $value) {
+                                $this->view->set($index, $value);
+                            }
+                    //	}
+                    break;
+                    
+                    /** list all users blogs */
+                    case 'list':
+                    //	if ($this->authTest()) {
+                            $this->dbal->getConnection();
+                            $results = $this->dbal->selectAllUsersBlogs($this->user->getUserId());
+                            $this->view->set('array', $results);
+                    //	}
+                    break;
+
+                    /** show an individual item */
+                    case 'show':
+                    break;
+
+                    /** registration form */
+                    case 'register':
+                    break;
+
+                    /** default throws an exception for invalid mode */
+                    default:
+                    throw new Exception("invalid mode");
+                
+                }
+            }
 			// render the template
 			$this->view->render();
 		
