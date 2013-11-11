@@ -9,5 +9,5 @@ function autoloadClasses($classname) {
 spl_autoload_register('autoloadClasses');
 
 // config file
-require_once('/home/blogist/config.php'); // this config is outside the project directory owned by root, with read only permissions
+require_once('~/config.php'); // this config is outside the project directory owned by root, with read only permissions
 
