@@ -2,7 +2,7 @@
 
 session_start();
 
-// bootstrapping ho
+// bootstrapping go
 require_once('bootstrap.php');
 
 $controller = new Controller();
